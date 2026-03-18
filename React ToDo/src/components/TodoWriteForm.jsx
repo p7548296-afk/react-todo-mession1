@@ -1,4 +1,7 @@
-function TodoWriteForm({ addTodo }) {
+import { useTodos } from '../context/TodoContext'
+
+function TodoWriteForm() {
+  const { addTodo } = useTodos()
   const handleOnSubmit = (e) => {
     e.preventDefault()
     const form = e.target
