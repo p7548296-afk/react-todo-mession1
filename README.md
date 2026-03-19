@@ -12,3 +12,6 @@
 - 완료 체크
 - 로컬스토리지 저장 구현
 - 간단한 UI 수정
+
+## 실행화면
+<img width="255" height="188" alt="image" src="https://github.com/user-attachments/assets/d6dbfe7d-282d-49b6-a53b-d28d0deab32c" />
