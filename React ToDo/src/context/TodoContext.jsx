@@ -8,7 +8,7 @@ export function TodoProvider({ children }) {
   const [todos, setTodos] = useState([
     { id: 3, text: '공부하기', checked: true },
     { id: 2, text: '코딩하기', checked: false },
-    { id: 1, text: '운동하기', checked: true },
+    { id: 1, text: '운동하기', checked: false },
   ])
 
   const addTodo = (text) => {
