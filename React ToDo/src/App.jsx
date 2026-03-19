@@ -14,6 +14,7 @@ function App() {
 
   return (
     <>
+      <h1>! React ToDo !</h1>
       <TodoWriteForm todos={todos} setTodos={setTodos} />
       <TodoList todos={todos} setTodos={setTodos} />
     </>
