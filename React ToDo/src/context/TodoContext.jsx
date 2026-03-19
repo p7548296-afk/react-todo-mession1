@@ -1,44 +1,35 @@
-import { createContext, useContext, useRef, useState } from 'react'
+import { createContext, useContext, useEffect, useState } from 'react'
 
 const TodoContext = createContext()
 
-export function TodoProvider({ children }) {
-  const lastId = useRef(4)
+export const TodoProvider = ({ children }) => {
+  const [todos, setTodos] = useState(() => {
+    const saved = localStorage.getItem('todos')
+    return saved ? JSON.parse(saved) : []
+  })
 
-  const [todos, setTodos] = useState([
-    { id: 3, text: '공부하기', checked: true },
-    { id: 2, text: '코딩하기', checked: false },
-    { id: 1, text: '운동하기', checked: false },
-  ])
+  useEffect(() => {
+    localStorage.setItem('todos', JSON.stringify(todos))
+  }, [todos])
 
   const addTodo = (text) => {
-    const todo = { id: lastId.current, text, checked: false }
-    setTodos([todo, ...todos])
-    lastId.current++
+    const newTodo = {
+      id: Date.now(),
+      text,
+      checked: false,
+    }
+    setTodos([...todos, newTodo])
   }
 
-  const removeTodo = (seletedId) => {
-    const filterTodos = todos.filter((todo) => todo.id != seletedId)
-    setTodos(filterTodos)
+  const removeTodo = (id) => {
+    setTodos(todos.filter((todo) => todo.id !== id))
   }
 
-  const toggleTodo = (seletedId) => {
-    const updateTodos = todos.map((todo) => (todo.id == seletedId ? { ...todo, checked: !todo.checked } : todo))
-    setTodos(updateTodos)
+  const toggleTodo = (id) => {
+    setTodos(todos.map((todo) => (todo.id === id ? { ...todo, checked: !todo.checked } : todo)))
   }
 
-  const value = {
-    todos,
-    addTodo,
-    removeTodo,
-    toggleTodo,
-  }
-
-  return <TodoContext.Provider value={value}>{children}</TodoContext.Provider>
+  return <TodoContext.Provider value={{ todos, addTodo, removeTodo, toggleTodo }}>{children}</TodoContext.Provider>
 }
 
-export function useTodos() {
-  const context = useContext(TodoContext)
-
-  return context
-}
+export const useTodos = () => useContext(TodoContext)
