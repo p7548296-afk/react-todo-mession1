@@ -1,6 +1,4 @@
-import TodoList from './components/TodoList'
-import TodoWriteForm from './components/TodoWriteForm'
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 
 function App() {
   const [todos, setTodos] = useState([]) // 서버에서 받아온 todo 목록
