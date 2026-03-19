@@ -3,6 +3,8 @@ import { useEffect, useState } from 'react'
 function App() {
   const [todos, setTodos] = useState([])
   const [inputValue, setInputValue] = useState('')
+  const [editId, setEditId] = useState(null)
+  const [editValue, setEditValue] = useState('')
 
   // API에서 목록 불러오기
   const fetchTodos = () => {
@@ -55,9 +57,31 @@ function App() {
     }).catch((err) => console.error(err))
   }
 
+  // 수정 시작
+  const startEdit = (id, currentText) => {
+    setEditId(id)
+    setEditValue(currentText)
+  }
+
+  // 수정 완료
+  const saveEdit = (id) => {
+    if (!editValue.trim()) return
+
+    setTodos((prev) => prev.map((t) => (t.id === id ? { ...t, todo: editValue } : t)))
+
+    setEditId(null)
+    setEditValue('')
+
+    fetch(`https://dummyjson.com/todos/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ todo: editValue }),
+    }).catch(console.error)
+  }
+
   return (
     <div className="App">
-      <h1>Todo API 연동</h1>
+      <h1>Todo API 연동 + 수정 버튼</h1>
 
       {/* 입력 */}
       <input
@@ -68,24 +92,46 @@ function App() {
           if (e.key === 'Enter') addTodo()
         }}
       />
-      <button onClick={addTodo}>등록</button>
+      <button onClick={addTodo}>추가</button>
 
-      {/* 리스트 */}
       <ul style={{ listStyle: 'none', padding: 0 }}>
         {todos.map((todo) => (
-          <li key={todo.id}>
+          <li key={todo.id} style={{ marginBottom: '8px' }}>
             <input type="checkbox" checked={todo.completed} onChange={() => toggleTodo(todo.id)} />
-            <span
-              style={{
-                textDecoration: todo.completed ? 'line-through' : 'none',
-                marginLeft: '8px',
-              }}
-            >
-              {todo.todo}
-            </span>
-            <button onClick={() => deleteTodo(todo.id)} style={{ marginLeft: '8px' }}>
-              X
-            </button>
+
+            {editId === todo.id ? (
+              <>
+                <input
+                  value={editValue}
+                  onChange={(e) => setEditValue(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') saveEdit(todo.id)
+                  }}
+                  style={{ marginLeft: '8px' }}
+                  autoFocus
+                />
+                <button onClick={() => saveEdit(todo.id)} style={{ marginLeft: '4px' }}>
+                  저장
+                </button>
+              </>
+            ) : (
+              <>
+                <span
+                  style={{
+                    textDecoration: todo.completed ? 'line-through' : 'none',
+                    marginLeft: '8px',
+                  }}
+                >
+                  {todo.todo}
+                </span>
+                <button onClick={() => startEdit(todo.id, todo.todo)} style={{ marginLeft: '8px' }}>
+                  수정
+                </button>
+                <button onClick={() => deleteTodo(todo.id)} style={{ marginLeft: '4px' }}>
+                  삭제
+                </button>
+              </>
+            )}
           </li>
         ))}
       </ul>
