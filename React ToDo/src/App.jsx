@@ -81,7 +81,7 @@ function App() {
 
   return (
     <div className="App">
-      <h1>Todo API 연동 + 수정 버튼</h1>
+      <h1>React TODo</h1>
 
       {/* 입력 */}
       <input
